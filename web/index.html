@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Hostel Management System</title>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="styles.css">
+        <style>
+            html, body {
+                height: 100%; /* Makes html and body take 100% of their parent's height */
+                margin: 0; /* Removes default browser margin around the body */
+                padding: 0; /* Removes default browser padding around the body if any */
+            }
+            body {
+                font-family: Arial, sans-serif;
+                background-image: linear-gradient(180deg, #ffffff, #8080d7);
+            }
+            header {
+                background-color: #3e4e88;
+                color: white;
+                padding: 15px;
+                text-align: center;
+            }
+            header img {
+                height: 60px;
+                float: left;
+                margin-right: 20px;
+            }
+            .login-icon {
+                float: right;
+                margin-top: -40px;
+                margin-right: 20px;
+            }
+            .login-icon img {
+                height: 30px;
+                cursor: pointer;
+            }
+            h1 {
+                font-size: 32px;
+            }
+            .images {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin: 10px;
+            }
+            .images img {
+                width: 350px;
+                border-radius: 10px;
+                box-shadow: 2px 2px 10px gray;
+            }
+            .top-header {
+                position: relative; /* Needed for absolute positioning of children */
+                display: flex;
+                align-items: center; /* Vertically centers the logo */
+                background-color: #3f4a8b;
+                padding: 10px;
+                color: white;
+                min-height: 80px; /* Ensure header has enough height */
+            }
+            .uitm-logo {
+                position: absolute; /* Take logo out of normal flow */
+                left: 10px; /* Position it 10px from the left edge */
+                z-index: 10; /* Ensure it's above other content */
+            }
+            .login-logo {
+                position: absolute; /* Take logo out of normal flow */
+                right: 10px; /* Position it 10px from the left edge */
+                z-index: 10; /* Ensure it's above other content */
+            }
+            .main-title-area { /* This is the container for WELCOME and Hostel Management System */
+                position: absolute; /* Take it out of normal flow */
+                left: 50%; /* Position its left edge at the horizontal center of the header */
+                transform: translateX(-50%); /* Shift it left by half its own width to truly center it */
+                text-align: center; /* Ensure text inside is centered if it wraps */
+                width: auto; /* Allow width to be determined by content */
+                /* Other styles for your titles */
+            }
+        </style>
+    </head>
+    <body>
+        <header class="top-header">
+            <div class="uitm-logo">
+                <img src="images/images1.png" alt="UiTM Logo">
+            </div>
+            <div class="main-title-area"> 
+                <h1>WELCOME</h1>
+                <h1>Hostel Management System</h1>
+            </div>
+            <div class="login-logo">
+                <a href="login.jsp"><img src="images/img2.png" alt="Login"></a>
+            </div>
+        </header>
+        <div style="display: flex; border-radius: 10px; background: #aad9d9; gap: 20px; padding: 10px; margin: 20px; margin-right: 100px; margin-left: 100px">
+            <div style="margin-right: 10px;">
+                <img style="height: 240px; width: 350px" src="images/img4.jpeg">               
+            </div>
+            <div>
+                <h2 style="text-align: center; font-size: 30px">ABOUT US</h2>
+                <p style="font-size: 20px">
+                The Hostel Management System is a web-based system that aims at computerizing and streamlining hostel operations. 
+                It is designed to enhance efficiency and simplify the overall process for both the staff and the students. 
+                A few of the key features include admission of students, room allocation, fee payment, maintenance management, and report generation. 
+                The system helps hostel authorities make effective decisions and streamline operations.
+                </p>
+            </div>
+        </div>
+        <div class="images">
+            <img src="images/img6.jpeg">
+            <img src="images/img3.jpeg">
+        </div>
+    </body>
+</html>
+
+
