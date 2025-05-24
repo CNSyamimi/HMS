@@ -21,7 +21,7 @@ public class RegisterServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
     // Database configuration - should be externalized in production
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/hostel_management";
+    private static final String DB_URL = "nanti_buat";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "password";
 
