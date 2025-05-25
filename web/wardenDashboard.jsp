@@ -74,7 +74,7 @@
 <body>
 
 <div class="sidebar">
-    <img src="logo-uitm.png" alt="UiTM Logo" style="width: 100px;">
+    <img src="${pageContext.request.contextPath}/images/logo.png" alt="UiTM Logo" style="width: 100px;">
     <a href="wardenDashboard.jsp" class="active">Dashboard</a>
     <a href="wardenProfile.jsp">My Profile</a>
     <a href="blockDetails.jsp">Block</a>

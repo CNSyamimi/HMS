@@ -73,7 +73,7 @@
 </head>
 <body>
     <div class="sidebar">
-        <img src="logo-uitm.png" alt="UiTM Logo" style="width: 100px;">
+        <img src="${pageContext.request.contextPath}/images/logo-uitm.png" alt="UiTM Logo" style="width: 100px;">
         <a href="adminDashboard.jsp" class="active">Dashboard</a>
         <a href="adminProfile.jsp">My Profile</a>
         <a href="studentManagement.jsp">Student</a>
