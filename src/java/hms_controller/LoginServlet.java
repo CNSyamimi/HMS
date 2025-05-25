@@ -10,20 +10,17 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-@WebServlet("/login")
 public class LoginServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-    
-    // Database configuration - should be moved to config file in production
-    private static final String DB_URL = "nanti_buat";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "password";
+
+    @Override
+    public void init() throws ServletException {
+        // Initialization can be done here if needed
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -57,14 +54,13 @@ public class LoginServlet extends HttpServlet {
             // Return to login page if errors exist
             if (!errorMsgs.isEmpty()) {
                 request.setAttribute("errorMsgs", errorMsgs);
-                dispatcher = request.getRequestDispatcher("/login.jsp");
+                dispatcher = request.getRequestDispatcher("login.jsp");
                 dispatcher.forward(request, response);
                 return;
             }
             
             // Database operations
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/HostelManagement", "app", "app")) {
                 
                 String query = "SELECT id, name, email, role FROM users WHERE email = ? AND password = ? AND role = ?";
                 try (PreparedStatement pst = conn.prepareStatement(query)) {
@@ -83,21 +79,21 @@ public class LoginServlet extends HttpServlet {
                             // Redirect based on role
                             switch(role) {
                                 case "admin":
-                                    dispatcher = request.getRequestDispatcher("/adminDashboard.jsp");
+                                    dispatcher = request.getRequestDispatcher("adminDashboard.jsp");
                                     break;
                                 case "warden":
-                                    dispatcher = request.getRequestDispatcher("/wardenDashboard.jsp");
+                                    dispatcher = request.getRequestDispatcher("wardenDashboard.jsp");
                                     break;
                                 case "student":
-                                    dispatcher = request.getRequestDispatcher("/studentDashboard.jsp");
+                                    dispatcher = request.getRequestDispatcher("studentDashboard.jsp");
                                     break;
                                 default:
-                                    dispatcher = request.getRequestDispatcher("/index.jsp");
+                                    dispatcher = request.getRequestDispatcher("index.jsp");
                             }
                         } else {
                             errorMsgs.add("Invalid email, password, or role combination.");
                             request.setAttribute("errorMsgs", errorMsgs);
-                            dispatcher = request.getRequestDispatcher("/login.jsp");
+                            dispatcher = request.getRequestDispatcher("login.jsp");
                         }
                     }
                 }
@@ -106,18 +102,20 @@ public class LoginServlet extends HttpServlet {
             // Forward to appropriate page
             dispatcher.forward(request, response);
             
-        } catch (ClassNotFoundException e) {
-            errorMsgs.add("Database driver not found: " + e.getMessage());
-            request.setAttribute("errorMsgs", errorMsgs);
-            request.getRequestDispatcher("/error.jsp").forward(request, response);
         } catch (SQLException e) {
             errorMsgs.add("Database error occurred: " + e.getMessage());
             request.setAttribute("errorMsgs", errorMsgs);
-            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            request.getRequestDispatcher("error.jsp").forward(request, response);
         } catch (Exception e) {
             errorMsgs.add("An unexpected error occurred: " + e.getMessage());
             request.setAttribute("errorMsgs", errorMsgs);
-            request.getRequestDispatcher("/error.jsp").forward(request, response);
+            request.getRequestDispatcher("error.jsp").forward(request, response);
         }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.sendRedirect("login.jsp");  // Redirect to login page if accessed via GET
     }
 }
