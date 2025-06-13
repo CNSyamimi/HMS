@@ -96,7 +96,7 @@
     <a href="blockDetails.jsp">Block</a>
     <a href="wardenStudentView.jsp">Student</a>
     <a href="wardenBillView.jsp">Manage Bills</a>
-    <a href="WardenMaintenance.jsp">Manage Maintenance</a>
+    <a href="wardenMaintenance.jsp">Manage Maintenance</a>
     <a href="login.jsp">Log Out</a>
 </div>
 
