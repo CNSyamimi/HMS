@@ -17,6 +17,12 @@ import javax.servlet.http.HttpSession;
 
 public class LoginServlet extends HttpServlet {
 
+    // Dummy validation method (replace with DB check later)
+    private boolean isValidUser(String email, String password) {
+        // Temporary: email = "admin@example.com", password = "123"
+        return "admin@example.com".equals(email) && "123".equals(password);
+    }
+    
     @Override
     public void init() throws ServletException {
         // Initialization can be done here if needed
