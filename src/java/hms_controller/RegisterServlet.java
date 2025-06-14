@@ -8,30 +8,36 @@ import javax.servlet.http.*;
 
 public class RegisterServlet extends HttpServlet {
 
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/hostelmanagement?useSSL=false&zeroDateTimeBehavior=CONVERT_TO_NULL";
+    private static final String DB_USER = "root";
+    private static final String DB_PASSWORD = "";
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
         // Retrieve form parameters
-        String fullName = request.getParameter("fullName");
-        String matricNumber = request.getParameter("matricNumber");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
+        String sName = request.getParameter("fullName");
+        String studentID = request.getParameter("matricNumber");
+        String sEmail = request.getParameter("email");
+        String sPass = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
         String program = request.getParameter("program");
         String semesterStr = request.getParameter("semester");
-        String phone = request.getParameter("phone");
+        String sPho = request.getParameter("phone");
         String terms = request.getParameter("terms");
+        
+      
 
         // Validate required fields
-        if (fullName == null || fullName.isEmpty() ||
-            matricNumber == null || matricNumber.isEmpty() ||
-            email == null || email.isEmpty() ||
-            password == null || password.isEmpty() ||
+        if (sName == null || sName.isEmpty() ||
+            studentID == null || studentID.isEmpty() ||
+            sEmail == null || sEmail.isEmpty() ||
+            sPass == null || sPass.isEmpty() ||
             confirmPassword == null || confirmPassword.isEmpty() ||
             program == null || program.isEmpty() ||
             semesterStr == null || semesterStr.isEmpty() ||
-            phone == null || phone.isEmpty() ||
+            sPho == null || sPho.isEmpty() ||
             terms == null) {
             
             request.setAttribute("error", "All fields are required.");
@@ -40,7 +46,7 @@ public class RegisterServlet extends HttpServlet {
         }
 
         // Validate password match
-        if (!password.equals(confirmPassword)) {
+        if (!sPass.equals(confirmPassword)) {
             request.setAttribute("error", "Passwords do not match.");
             request.getRequestDispatcher("/register.jsp").forward(request, response);
             return;
@@ -59,47 +65,54 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
 
-        // Create Student object
+        // Create Student object with database-compatible field names
         Student student = new Student();
-        student.setFullName(fullName);
-        student.setMatricNumber(matricNumber);
-        student.setEmail(email);
-        student.setPassword(password);
+        student.setSName(sName);
+        student.setStudentID(Integer.parseInt(studentID));
+        student.setSEmail(sEmail);
+        student.setSPass(sPass);
         student.setProgram(program);
         student.setSemester(semester);
-        student.setPhone(phone);
+        student.setSPho(sPho);
+        student.setAdmin_id(0); // Default admin_id if not provided
 
         // Database operations
-        String sql = "INSERT INTO student (fullname, matricnumber, email, password, program, semester, phone) "
-                   + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO student (sName, studentID, sEmail, sPass, program, semester, sPho, admin_id) " +
+           "VALUES (?, ?, ?, ?, ?, ?, ?, NULL)";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            
+            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-        try (Connection conn = DriverManager.getConnection("jdbc:derby://localhost:1527/HostelManagement", "app", "app");
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, student.getSName());
+                pstmt.setInt(2, student.getStudentID());
+                pstmt.setString(3, student.getSEmail());
+                pstmt.setString(4, student.getSPass());
+                pstmt.setString(5, student.getProgram());
+                pstmt.setInt(6, student.getSemester());
+                pstmt.setString(7, student.getSPho());
+                
+          
+               
+                int rowsAffected = pstmt.executeUpdate();
 
-            // Set parameters
-            pstmt.setString(1, student.getFullName());
-            pstmt.setString(2, student.getMatricNumber());
-            pstmt.setString(3, student.getEmail());
-            pstmt.setString(4, student.getPassword());
-            pstmt.setString(5, student.getProgram());
-            pstmt.setInt(6, student.getSemester());
-            pstmt.setString(7, student.getPhone());
-
-            // Execute update
-            int rowsAffected = pstmt.executeUpdate();
-
-            if (rowsAffected > 0) {
-                request.setAttribute("success", "Registration successful! Please login.");
-                request.getRequestDispatcher("/login.jsp").forward(request, response);
-            } else {
-                request.setAttribute("error", "Registration failed. Please try again.");
-                request.getRequestDispatcher("/register.jsp").forward(request, response);
+                if (rowsAffected > 0) {
+                    request.setAttribute("success", "Registration successful! Please login.");
+                    request.getRequestDispatcher("/login.jsp").forward(request, response);
+                } else {
+                    request.setAttribute("error", "Registration failed. Please try again.");
+                    request.getRequestDispatcher("/register.jsp").forward(request, response);
+                }
             }
-
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            request.setAttribute("error", "MySQL JDBC Driver not found.");
+            request.getRequestDispatcher("/register.jsp").forward(request, response);
         } catch (SQLIntegrityConstraintViolationException e) {
-            if (e.getMessage().contains("matric_number")) {
+            if (e.getMessage().contains("studentID")) {
                 request.setAttribute("error", "Matric number already exists.");
-            } else if (e.getMessage().contains("email")) {
+            } else if (e.getMessage().contains("sEmail")) {
                 request.setAttribute("error", "Email already registered.");
             } else {
                 request.setAttribute("error", "Database error: " + e.getMessage());
@@ -115,7 +128,6 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Redirect to registration page if accessed via GET
         response.sendRedirect(request.getContextPath() + "/register.jsp");
     }
 }

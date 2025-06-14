@@ -5,70 +5,62 @@ import java.io.Serializable;
 public class Student implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    private int id;
-    private String fullName;
-    private String matricNumber;
-    private String email;
-    private String password;
+    private int studentID;  // Changed from id to match DB
+    private String sName;   // Changed from fullName
+    private String sEmail;  // Changed from email
+    private String sPass;   // Changed from password
     private String program;
     private int semester;
-    private String phone;
+    private String sPho;    // Changed from phone
+    private int admin_id;   // Added new field
     
     // Constructors
     public Student() {
         // Default constructor
     }
     
-    public Student(String fullName, String matricNumber, String email, String password, 
-                  String program, int semester, String phone) {
-        this.fullName = fullName;
-        this.matricNumber = matricNumber;
-        this.email = email;
-        this.password = password;
+    public Student(String sName, String studentID, String sEmail, String sPass, 
+                  String program, int semester, String sPho) {
+        this.sName = sName;
+        this.studentID = Integer.parseInt(studentID); // Assuming studentID is numeric
+        this.sEmail = sEmail;
+        this.sPass = sPass;
         this.program = program;
         this.semester = semester;
-        this.phone = phone;
+        this.sPho = sPho;
     }
     
     // Getters and Setters
-    public int getId() {
-        return id;
+    public int getStudentID() {
+        return studentID;
     }
     
-    public void setId(int id) {
-        this.id = id;
+    public void setStudentID(int studentID) {
+        this.studentID = studentID;
     }
     
-    public String getFullName() {
-        return fullName;
+    public String getSName() {
+        return sName;
     }
     
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setSName(String sName) {
+        this.sName = sName;
     }
     
-    public String getMatricNumber() {
-        return matricNumber;
+    public String getSEmail() {
+        return sEmail;
     }
     
-    public void setMatricNumber(String matricNumber) {
-        this.matricNumber = matricNumber;
+    public void setSEmail(String sEmail) {
+        this.sEmail = sEmail;
     }
     
-    public String getEmail() {
-        return email;
+    public String getSPass() {
+        return sPass;
     }
     
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    
-    public String getPassword() {
-        return password;
-    }
-    
-    public void setPassword(String password) {
-        this.password = password;
+    public void setSPass(String sPass) {
+        this.sPass = sPass;
     }
     
     public String getProgram() {
@@ -87,25 +79,33 @@ public class Student implements Serializable {
         this.semester = semester;
     }
     
-    public String getPhone() {
-        return phone;
+    public String getSPho() {
+        return sPho;
     }
     
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setSPho(String sPho) {
+        this.sPho = sPho;
+    }
+    
+    public int getAdmin_id() {
+        return admin_id;
+    }
+    
+    public void setAdmin_id(int admin_id) {
+        this.admin_id = admin_id;
     }
     
     @Override
     public String toString() {
         return "Student{" +
-                "id=" + id +
-                ", fullName='" + fullName + '\'' +
-                ", matricNumber='" + matricNumber + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
+                "studentID=" + studentID +
+                ", sName='" + sName + '\'' +
+                ", sEmail='" + sEmail + '\'' +
+                ", sPass='" + sPass + '\'' +
                 ", program='" + program + '\'' +
                 ", semester=" + semester +
-                ", phone='" + phone + '\'' +
+                ", sPho='" + sPho + '\'' +
+                ", admin_id=" + admin_id +
                 '}';
     }
 }

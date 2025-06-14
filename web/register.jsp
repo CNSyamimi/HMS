@@ -19,33 +19,43 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="fullName">Full Name</label>
-                    <input type="text" id="fullName" name="fullName" required placeholder="Enter your full name">
+                    <input type="text" id="fullName" name="fullName" required 
+                           pattern="[A-Za-z ]{3,50}" title="Only letters and spaces (3-50 characters)"
+                           placeholder="Enter your full name">
                     <i class="fas fa-user"></i>
                 </div>
                 
                 <div class="form-group">
                     <label for="matricNumber">Matric Number</label>
-                    <input type="text" id="matricNumber" name="matricNumber" required placeholder="e.g. 2023123456">
+                    <input type="text" id="matricNumber" name="matricNumber" required
+                           pattern="\d{10}" title="10-digit matric number"
+                           placeholder="e.g. 2023123456">
                     <i class="fas fa-id-card"></i>
                 </div>
             </div>
             
             <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" required placeholder="Enter your email">
+                <label for="email">University Email</label>
+                <input type="email" id="email" name="email" required
+                       pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
+                       title="Enter a valid email address"
+                       placeholder="e.g. abc123@university.edu">
                 <i class="fas fa-envelope"></i>
             </div>
             
             <div class="form-row">
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required placeholder="Create password">
+                    <input type="password" id="password" name="password" required
+                           minlength="8" title="Minimum 8 characters"
+                           placeholder="Create password (min 8 chars)">
                     <i class="fas fa-lock"></i>
                 </div>
                 
                 <div class="form-group">
                     <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm password">
+                    <input type="password" id="confirmPassword" name="confirmPassword" required
+                           placeholder="Confirm password">
                     <i class="fas fa-lock"></i>
                 </div>
             </div>
@@ -55,23 +65,31 @@
                     <label for="program">Program</label>
                     <select id="program" name="program" required>
                         <option value="">-- Select Program --</option>
-                        <option value="CS230">Computer Science</option>
-                        <option value="IT245">Information Technology</option>
-                        <option value="DS210">Data Science</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Software Engineering">Software Engineering</option>
                     </select>
                     <i class="fas fa-graduation-cap"></i>
                 </div>
                 
                 <div class="form-group">
                     <label for="semester">Current Semester</label>
-                    <input type="number" id="semester" name="semester" min="1" max="8" required placeholder="e.g. 4">
+                    <select id="semester" name="semester" required>
+                        <option value="">-- Select Semester --</option>
+                        <% for(int i=1; i<=8; i++) { %>
+                            <option value="<%=i%>">Semester <%=i%></option>
+                        <% } %>
+                    </select>
                     <i class="fas fa-calendar-alt"></i>
                 </div>
             </div>
             
             <div class="form-group">
                 <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" required placeholder="e.g. 0123456789">
+                <input type="tel" id="phone" name="phone" required
+                       pattern="[0-9]{10,15}" title="10-15 digit phone number"
+                       placeholder="e.g. 0123456789">
                 <i class="fas fa-phone"></i>
             </div>
             
