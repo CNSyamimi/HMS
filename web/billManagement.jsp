@@ -17,14 +17,14 @@
             </div>
             <nav>
                 <ul>
-                    <li><a href="dashboard.jsp">Dashboard</a></li>
-                    <li><a href="profile.jsp">My Profile</a></li>
-                    <li><a href="allocation.jsp">Allocation</a></li>
-                    <li><a href="student.jsp">Student</a></li>
-                    <li><a href="warden.jsp">Warden</a></li>
-                    <li><a href="billManagement.jsp" class="active">Manage Bills</a></li>
-                    <li><a href="maintenance.jsp">Manage Maintenance</a></li>
-                    <li><a href="logout.jsp">Log Out</a></li>
+        <a href="adminDashboard.jsp" class="active">Dashboard</a>
+        <a href="adminProfile.jsp">My Profile</a>
+        <a href="studentManagement.jsp">Student</a>
+        <a href="wardenManagement.jsp">Warden</a>
+        <a href="allocationView.jsp">Allocation</a>
+        <a href="billManagement.jsp">Manage Bills</a>
+        <a href="maintenanceManagement.jsp">Manage Maintenance</a>
+        <a href="login.jsp">Log Out</a>
                 </ul>
             </nav>
         </div>
