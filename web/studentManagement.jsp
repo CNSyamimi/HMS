@@ -80,7 +80,6 @@
         <a href="allocationView.jsp">Allocation</a>
         <a href="billManagement.jsp">Manage Bills</a>
         <a href="maintenanceManagement.jsp">Manage Maintenance</a>
-        <a href="visitorManagement.jsp">Visitor Details</a>
         <a href="login.jsp">Log Out</a>
     </div>
 
