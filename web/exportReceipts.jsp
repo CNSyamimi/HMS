@@ -6,14 +6,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Export Receipts</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <!-- Sidebar Navigation -->
         <div class="sidebar">
             <div class="logo">
-                <img src="UITM_Logo.png" alt="UITM Logo">
+                <img src="images/logo.png" alt="UITM Logo">
             </div>
             <nav>
                 <ul>

@@ -13,7 +13,7 @@
         <!-- Sidebar Navigation -->
         <div class="sidebar">
             <div class="logo">
-                <img src="UITM_Logo.png" alt="UITM Logo">
+                <img src="images/logo.png" alt="UITM Logo">
             </div>
             <nav>
                 <ul>
