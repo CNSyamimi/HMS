@@ -80,7 +80,7 @@ public class RegisterServlet extends HttpServlet {
         String sql = "INSERT INTO student (sName, studentID, sEmail, sPass, program, semester, sPho, admin_id) " +
            "VALUES (?, ?, ?, ?, ?, ?, ?, NULL)";
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName("com.mysql.jdbc.Driver");
             
             try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
