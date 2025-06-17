@@ -1,143 +1,126 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Warden Dashboard</title>
-    <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(to bottom right, #dcd6f7, #a6a6f7);
-            font-family: 'Segoe UI', sans-serif;
-        }
-        .sidebar {
-            width: 250px;
-            background: #fff;
-            padding: 20px;
-            border-right: 1px solid #ddd;
-        }
-        .sidebar a {
-            display: block;
-            padding: 10px;
-            color: #333;
-            text-decoration: none;
-            margin-bottom: 5px;
-        }
-        .sidebar a.active {
-            background-color: #e6e6ff;
-            font-weight: bold;
-        }
-        .main {
-            flex-grow: 1;
-            padding: 40px;
-        }
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .overview-stat {
-            display: flex;
-            justify-content: space-around;
-            font-size: 16px;
-        }
-        .overview-stat div {
-            text-align: center;
-        }
-        .stat-value {
-            color: #4a3aff;
-            font-weight: bold;
-            font-size: 20px;
-        }
-        .feedback-item {
-            border-top: 1px solid #eee;
-            padding: 10px 0;
-        }
-        .feedback-item:first-child {
-            border-top: none;
-        }
-        .feedback-name {
-            font-weight: bold;
-        }
-        .feedback-room {
-            float: right;
-            font-size: 14px;
-            color: #999;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="warden.css">
 </head>
 <body>
 
 <div class="sidebar">
-    <img src="${pageContext.request.contextPath}/images/logo.png" alt="UiTM Logo" style="width: 100px;">
-    <a href="wardenDashboard.jsp" class="active">Dashboard</a>
-    <a href="wardenProfile.jsp">My Profile</a>
-    <a href="blockDetails.jsp">Block</a>
-    <a href="wardenStudentView.jsp">Student</a>
-    <a href="wardenBillView.jsp">Manage Bills</a>
-    <a href="wardenMaintenance.jsp">Manage Maintenance</a>
-    <a href="login.jsp">Log Out</a>
+    <img src="images/UiTM-logo.png" alt="UiTM Logo">
+
+    <ul>
+        <li><a href="wardenDashboard.jsp">Dashboard</a></li>
+        <li><a href="wardenProfile.jsp">My Profile</a></li>
+        <li class="accordion-toggle">Block</li>
+        <ul class="accordion-content">
+            <li><a href="blockDetails.jsp">› List Block Residents</a></li>
+            <li><a href="wardenVisitorView.jsp">› Visitor Details</a></li>
+        </ul>
+        <li><a href="wardenBillView.jsp">Manage Bills</a></li>
+        <li class="accordion-toggle">Manage Maintenance</li>
+        <ul class="accordion-content">
+            <li><a href="wardenMaintenance.jsp">› List Maintenance</a></li>
+            <li><a href="updateMaintenance.jsp">› Update Maintenance</a></li>
+        </ul>
+        <li><a href="login.jsp">Log Out</a></li>
+    </ul>
 </div>
 
-<div class="main">
-    <h1>Warden Dashboard</h1>
-    <p><%= new java.text.SimpleDateFormat("EEEE, MMMM dd, yyyy").format(new java.util.Date()) %></p>
+    <div class="main-content">
+        <h1 style="color: #3373ff;">DASHBOARD</h1>
+        <p style="margin-bottom: 30px;"><%= new java.text.SimpleDateFormat("EEEE, MMMM dd, yyyy").format(new java.util.Date()) %></p>
 
-    <div class="card">
-        <h2>Overview</h2>
-        <div class="overview-stat">
-            <div>
-                <div>Semester</div>
-                <div class="stat-value">${semesterPeriod}</div>
+        <!-- Overview Section -->
+        <div class="card">
+            <h2>Overview</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 30px;">
+                <div>
+                    <strong>Current Semester period</strong><br>
+                    <span class="stat">20252</span>
+                </div>
+                <div>
+                    <strong>Total Student allocated</strong><br>
+                    <span class="stat">1000</span>
+                </div>
+                <div>
+                    <strong>Total Available room</strong><br>
+                    <span class="stat">21</span>
+                </div>
+                <div>
+                    <strong>Total Occupied room</strong><br>
+                    <span class="stat">560</span>
+                </div>
             </div>
-            <div>
-                <div>Students</div>
-                <div class="stat-value">${totalStudents}</div>
+        </div>
+
+        <!-- Maintenance & Room Status -->
+        <div style="display: flex; gap: 20px; margin-top: 20px;">
+            <div class="card" style="flex: 1;">
+                <strong>Total Maintenance Request Assigned:</strong>
+                <p style="margin-top: 10px;">
+                    <a href="#" style="color: #3373ff; text-decoration: none;">12 Maintenance</a>
+                </p>
             </div>
-            <div>
-                <div>Available Rooms</div>
-                <div class="stat-value">${availableRooms}</div>
+
+            <div class="card" style="flex: 2;">
+                <strong>Room status</strong>
+                <div style="display: flex; justify-content: space-between; margin-top: 10px;">
+                    <div>
+                        <p>Occupied rooms: <strong>560</strong></p>
+                        <p>Clean: 90</p>
+                        <p>Dirty: 4</p>
+                        <p>Inspected: 60</p>
+                    </div>
+                    <div>
+                        <p>Available rooms: <strong>21</strong></p>
+                        <p>Clean: 17</p>
+                        <p>Dirty: 2</p>
+                        <p>Inspected: 3</p>
+                    </div>
+                </div>
             </div>
-            <div>
-                <div>Occupied Rooms</div>
-                <div class="stat-value">${occupiedRooms}</div>
+        </div>
+
+        <!-- Quick Navigation Cards -->
+        <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+            <div class="card" style="text-align: center; width: 30%;">
+                <h3>My Profile</h3>
+                <img src="images/profile-icon.png" alt="Profile Icon" width="80">
+                <br><br>
+                <button class="btn-primary">Go</button>
+            </div>
+
+            <div class="card" style="text-align: center; width: 30%;">
+                <h3>Block</h3>
+                <img src="images/building-icon.png" alt="Block Icon" width="80">
+                <br><br>
+                <button class="btn-primary">Go</button>
+            </div>
+
+            <div class="card" style="text-align: center; width: 30%;">
+                <h3>Manage Bills</h3>
+                <img src="images/bill-icon.png" alt="Bill Icon" width="80">
+                <br><br>
+                <button class="btn-primary">Go</button>
             </div>
         </div>
     </div>
-
-    <div class="card">
-        <h2>Total Maintenance Requests</h2>
-        <div class="stat-value"><a href="maintenance.jsp" style="color:#4a3aff;">${totalMaintenance} Maintenance</a></div>
-    </div>
-
-    <div class="card">
-        <h2>Room Status</h2>
-        <p><strong>Occupied Rooms (${occupiedRooms}):</strong></p>
-        <ul>
-            <li>Clean: ${occupiedClean}</li>
-            <li>Dirty: ${occupiedDirty}</li>
-            <li>Inspected: ${occupiedInspected}</li>
-        </ul>
-        <p><strong>Available Rooms (${availableRooms}):</strong></p>
-        <ul>
-            <li>Clean: ${availableClean}</li>
-            <li>Dirty: ${availableDirty}</li>
-            <li>Inspected: ${availableInspected}</li>
-        </ul>
-    </div>
-
-    <div class="card">
-        <h2>Navigation</h2>
-        <a href="myProfile.jsp">Go to My Profile</a><br/>
-        <a href="block.jsp">Go to Block</a><br/>
-        <a href="manageBills.jsp">Go to Manage Bills</a>
-    </div>
-</div>
-
+        <!-- Accordion Script -->
+<script>
+    document.querySelectorAll('.accordion-toggle').forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            toggle.classList.toggle('active');
+            const content = toggle.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
+    });
+</script>
 </body>
 </html>
