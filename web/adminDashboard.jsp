@@ -1,3 +1,4 @@
+<%@page import="hms_controller.AdminDashboardServlet"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -81,31 +82,32 @@
         <a href="allocationView.jsp">Allocation</a>
         <a href="billManagement.jsp">Manage Bills</a>
         <a href="maintenanceManagement.jsp">Manage Maintenance</a>
+        <a href="visitorManagement.jsp">Visitor Details</a>
         <a href="login.jsp">Log Out</a>
     </div>
 
     <div class="main">
-        <div class="card">
+        <div class="card">   
             <h5>Overview</h5>
             <div class="overview-stat mt-3">
                 <div>
-                    <div class="stat-value">1000</div>
+                    <div class="stat-value"><%= AdminDashboardServlet.getTotalStudents() %></div>
                     <div>student in college</div>
                 </div>
                 <div>
-                    <div class="stat-value">13</div>
-                    <div>Unpaid bill</div>
+                    <div class="stat-value"><%= AdminDashboardServlet.getTotalWardens() %></div>
+                    <div>Wardens</div>
                 </div>
                 <div>
-                    <div class="stat-value">23</div>
+                    <div class="stat-value"><%= AdminDashboardServlet.getTotalMaintenanceRequests() %></div>
                     <div>Maintenance request</div>
                 </div>
                 <div>
-                    <div class="stat-value">21</div>
-                    <div>Available room</div>
+                    <div class="stat-value"><%= AdminDashboardServlet.getTotalRooms() %></div>
+                    <div>Total rooms</div>
                 </div>
                 <div>
-                    <div class="stat-value">560</div>
+                    <div class="stat-value"><%= AdminDashboardServlet.getTotalAllocatedRooms() %></div>
                     <div>Occupied room</div>
                 </div>
             </div>
@@ -115,20 +117,26 @@
             <h5>Room status</h5>
             <div class="row mt-3">
                 <div class="col-md-6">
-                    <p><strong>Occupied rooms:</strong> 560</p>
+                    <p><strong>Occupied rooms:</strong> <%= AdminDashboardServlet.getTotalAllocatedRooms() %></p>
+                    <!-- These would need additional methods in the servlet -->
                     <p>Clean: 90</p>
                     <p>Dirty: 4</p>
                     <p>Inspected: 60</p>
                 </div>
                 <div class="col-md-6">
-                    <p><strong>Available rooms:</strong> 21</p>
+                    <%
+                        int totalRooms = AdminDashboardServlet.getTotalRooms();
+                        int allocatedRooms = AdminDashboardServlet.getTotalAllocatedRooms();
+                        int availableRooms = totalRooms - allocatedRooms;
+                    %>
+                    <p><strong>Available rooms:</strong> <%= availableRooms %></p>
+                    <!-- These would need additional methods in the servlet -->
                     <p>Clean: 17</p>
                     <p>Dirty: 2</p>
                     <p>Inspected: 3</p>
                 </div>
             </div>
         </div>
-
         <div class="card">
             <h5>Student feedback</h5>
             <div class="feedback-item">

@@ -1,106 +1,148 @@
 package hms_controller;
 
 import hms_model.Bill;
+import hms_model.Student;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
-@WebServlet("/billManagement")
+@WebServlet("/BillManagementServlet")
 public class BillManagementServlet extends HttpServlet {
-    private static final long serialVersionUID = 1L;
-    
-    // Database connection parameters (consistent with LoginServlet)
+    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String DB_URL = "jdbc:mysql://localhost:3306/hostelmanagement?useSSL=false";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "";
+    private static final String DB_PASSWORD = ""; // Add your database password here
 
-    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
         HttpSession session = request.getSession();
-        String role = (String) session.getAttribute("role");
+        Integer adminId = (Integer) session.getAttribute("admin_id");
         
-        // Check if user is logged in and has appropriate role
-        if (session.getAttribute("userId") == null || 
-            (!"admin".equalsIgnoreCase(role) && !"warden".equalsIgnoreCase(role))) {
-            response.sendRedirect("login.jsp");
+        // Check if admin is logged in
+        if (adminId == null) {
+            response.sendRedirect("adminLogin.jsp");
             return;
         }
-        
-        String searchTerm = request.getParameter("search");
-        List<Bill> billList = new ArrayList<>();
-        String error = null;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
+            // Load JDBC driver
+            Class.forName(JDBC_DRIVER);
+            
+            // Get all bills with student details
+            List<BillView> billViews = getAllBillViews();
+            
+            // Calculate summary statistics
+            double totalPaid = calculateTotalPaid(billViews);
+            double totalUnpaid = calculateTotalUnpaid(billViews);
+            int paidCount = countByStatus(billViews, "Paid");
+            int unpaidCount = countByStatus(billViews, "Unpaid");
+            
+            // Set attributes for JSP
+            request.setAttribute("bills", billViews);
+            request.setAttribute("totalPaid", totalPaid);
+            request.setAttribute("totalUnpaid", totalUnpaid);
+            request.setAttribute("paidCount", paidCount);
+            request.setAttribute("unpaidCount", unpaidCount);
+            
+            request.getRequestDispatcher("billManagement.jsp").forward(request, response);
+            
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "Error retrieving bill data: " + e.getMessage());
+            request.getRequestDispatcher("error.jsp").forward(request, response);
+        }
+    }
+
+    private List<BillView> getAllBillViews() throws SQLException {
+        List<BillView> billViews = new ArrayList<>();
+        
+        String sql = "SELECT b.billID, b.billType, b.amount, b.dueDate, b.status, " +
+                     "s.studentID, s.sName, s.program, s.semester " +
+                     "FROM bill b " +
+                     "JOIN student s ON b.studentID = s.studentID " +
+                     "ORDER BY b.dueDate DESC";
+        
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                BillView view = new BillView();
                 
-                // Base query to get bill information with student and room details
-                String query = "SELECT b.billID, b.billType, b.amount, b.status, b.dueDate, " +
-                              "s.studentID, s.sName, s.sPho, s.sEmail, " +
-                              "r.roomID, r.roomType, h.blockName " +
-                              "FROM bill b " +
-                              "JOIN student s ON b.studentID = s.studentID " +
-                              "LEFT JOIN allocation a ON b.allocationID = a.allocationID " +
-                              "LEFT JOIN room r ON a.roomID = r.roomID " +
-                              "LEFT JOIN hostelblock h ON r.blockID = h.blockID";
+                // Set bill data
+                Bill bill = new Bill();
+                bill.setBillID(rs.getInt("billID"));
+                bill.setBillType(rs.getString("billType"));
+                bill.setAmount(rs.getBigDecimal("amount"));
+                bill.setDueDate(rs.getDate("dueDate"));
+                bill.setStatus(rs.getString("status"));
+                view.setBill(bill);
                 
-                // Add search condition if search term exists
-                if (searchTerm != null && !searchTerm.isEmpty()) {
-                    query += " WHERE s.sName LIKE ? OR s.studentID LIKE ? OR s.sEmail LIKE ?";
-                }
+                // Set student data
+                Student student = new Student();
+                student.setStudentID(rs.getInt("studentID"));
+                student.setSName(rs.getString("sName"));
+                student.setProgram(rs.getString("program"));
+                student.setSemester(rs.getInt("semester"));
+                view.setStudent(student);
                 
-                try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-                    // Set parameters if searching
-                    if (searchTerm != null && !searchTerm.isEmpty()) {
-                        String likeTerm = "%" + searchTerm + "%";
-                        pstmt.setString(1, likeTerm);
-                        pstmt.setString(2, likeTerm);
-                        pstmt.setString(3, likeTerm);
-                    }
-                    
-                    try (ResultSet rs = pstmt.executeQuery()) {
-                        while (rs.next()) {
-                            Bill bill = new Bill();
-                            bill.setBillID(rs.getInt("billID"));
-                            bill.setBillType(rs.getString("billType"));
-                            bill.setAmount(rs.getBigDecimal("amount"));
-                            bill.setDueDate(rs.getDate("dueDate"));
-                            bill.setStatus(rs.getString("status"));
-                            bill.setStudentID(rs.getInt("studentID"));
-                            
-                            // Set display fields
-                            bill.setStudentName(rs.getString("sName"));
-                            bill.setMatricNo(String.valueOf(rs.getInt("studentID")));
-                            bill.setPhoneNo(rs.getString("sPho"));
-                            bill.setEmail(rs.getString("sEmail"));
-                            bill.setRoomInfo(rs.getString("blockName"), rs.getString("roomType"), rs.getInt("roomID"));
-                            
-                            billList.add(bill);
-                        }
-                    }
-                }
+                billViews.add(view);
             }
-        } catch (ClassNotFoundException e) {
-            error = "Database driver not found";
-        } catch (SQLException e) {
-            error = "Database error: " + e.getMessage();
         }
         
-        if (error != null) {
-            request.setAttribute("error", error);
-        }
-        
-        request.setAttribute("billList", billList);
-        request.getRequestDispatcher("billManagement.jsp").forward(request, response);
+        return billViews;
+    }
+
+    private double calculateTotalPaid(List<BillView> bills) {
+        return bills.stream()
+                .filter(b -> "Paid".equals(b.getBill().getStatus()))
+                .mapToDouble(b -> b.getBill().getAmount().doubleValue())
+                .sum();
+    }
+
+    private double calculateTotalUnpaid(List<BillView> bills) {
+        return bills.stream()
+                .filter(b -> "Unpaid".equals(b.getBill().getStatus()))
+                .mapToDouble(b -> b.getBill().getAmount().doubleValue())
+                .sum();
+    }
+
+    private int countByStatus(List<BillView> bills, String status) {
+        return (int) bills.stream()
+                .filter(b -> status.equals(b.getBill().getStatus()))
+                .count();
+    }
+}
+
+// Helper class to combine bill and student data
+class BillView {
+    private Bill bill;
+    private Student student;
+
+    public Bill getBill() {
+        return bill;
+    }
+
+    public void setBill(Bill bill) {
+        this.bill = bill;
+    }
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
     }
 }

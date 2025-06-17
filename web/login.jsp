@@ -9,7 +9,7 @@
 <body class="login-page">
     <div class="login-container">
         <div class="login-header">
-            <img src="${pageContext.request.contextPath}/images/logo.png" alt="Hostel Logo" class="logo">
+            <img src="${pageContext.request.contextPath}/images/logo-uitm.png" alt="Hostel Logo" class="logo">
             <h1>Hostel Management System</h1>
             <p>UiTM Machang</p>
         </div>

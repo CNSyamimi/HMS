@@ -1,62 +1,74 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package hms_model;
 
-/**
- *
- * @author Ailurophile
- */
-public class Visitor {
-    private int visitorId;
-    private String name;
-    private String relationship;
-    private String visitDate;
-    private int studentId;
+import java.sql.Date;
+import java.sql.Time;
 
-    public Visitor(int visitorId, String name, String relationship, String visitDate, int studentId) {
-        this.visitorId = visitorId;
-        this.name = name;
-        this.relationship = relationship;
+public class Visitor {
+    private int visitorID;
+    private int studentID;
+    private String visitorName;
+    private Date visitDate;
+    private Time visitTime;
+    private String visPass;
+
+    public Visitor() {
+    }
+
+    public Visitor(int visitorID, int studentID, String visitorName, Date visitDate, Time visitTime, String visPass) {
+        this.visitorID = visitorID;
+        this.studentID = studentID;
+        this.visitorName = visitorName;
         this.visitDate = visitDate;
-        this.studentId = studentId;
+        this.visitTime = visitTime;
+        this.visPass = visPass;
     }
 
     // Getters and Setters
-    public int getVisitorId(int visitorId){
-        return visitorId;
+    public int getVisitorID() {
+        return visitorID;
     }
-    public void setVisitorId(int visitorId){
-        this.visitorId = visitorId;
+
+    public void setVisitorID(int visitorID) {
+        this.visitorID = visitorID;
     }
-    
-    public String getName(String name){
-        return name;
+
+    public int getStudentID() {
+        return studentID;
     }
-    public void setName(String name){
-        this.name = name;
+
+    public void setStudentID(int studentID) {
+        this.studentID = studentID;
     }
-    
-    public String getRelationship(String relationship){
-        return relationship;
+
+    public String getVisitorName() {
+        return visitorName;
     }
-    public void setRelationship(String relationship){
-        this.relationship = relationship;
+
+    public void setVisitorName(String visitorName) {
+        this.visitorName = visitorName;
     }
-    
-    public String getVisitDate(String visitDate){
+
+    public Date getVisitDate() {
         return visitDate;
     }
-    public void setVisitDate(String visitDate){
+
+    public void setVisitDate(Date visitDate) {
         this.visitDate = visitDate;
     }
-    
-    public int getStudentId(int studentId){
-        return studentId;
+
+    public Time getVisitTime() {
+        return visitTime;
     }
-    public void setStudentId(int studentId){
-        this.studentId = studentId;
+
+    public void setVisitTime(Time visitTime) {
+        this.visitTime = visitTime;
+    }
+
+    public String getVisPass() {
+        return visPass;
+    }
+
+    public void setVisPass(String visPass) {
+        this.visPass = visPass;
     }
 }

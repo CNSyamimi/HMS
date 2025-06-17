@@ -11,7 +11,9 @@ public class Student implements Serializable {
     private String sPass;   // Changed from password
     private String program;
     private int semester;
-    private String sPho;    // Changed from phone
+    private String sPho;  
+    private String gender; // New field
+    private double merit; // Changed from phone
     private int admin_id;   // Added new field
     
     // Constructors
@@ -20,7 +22,7 @@ public class Student implements Serializable {
     }
     
     public Student(String sName, String studentID, String sEmail, String sPass, 
-                  String program, int semester, String sPho) {
+                  String program, int semester, String sPho, String gender, double merit) {
         this.sName = sName;
         this.studentID = Integer.parseInt(studentID); // Assuming studentID is numeric
         this.sEmail = sEmail;
@@ -28,6 +30,8 @@ public class Student implements Serializable {
         this.program = program;
         this.semester = semester;
         this.sPho = sPho;
+        this.gender = gender;
+        this.merit = merit;
     }
     
     // Getters and Setters
@@ -86,6 +90,21 @@ public class Student implements Serializable {
     public void setSPho(String sPho) {
         this.sPho = sPho;
     }
+     public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public double getMerit() {
+        return merit;
+    }
+
+    public void setMerit(double merit) {
+        this.merit = merit;
+    }
     
     public int getAdmin_id() {
         return admin_id;
@@ -105,7 +124,25 @@ public class Student implements Serializable {
                 ", program='" + program + '\'' +
                 ", semester=" + semester +
                 ", sPho='" + sPho + '\'' +
+                ", gender='" + gender + '\'' +
+                ", merit='" + merit + '\'' +
                 ", admin_id=" + admin_id +
                 '}';
+    }
+
+    public String getsName() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setsEmail(String string) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setsPho(String string) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setsName(String string) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

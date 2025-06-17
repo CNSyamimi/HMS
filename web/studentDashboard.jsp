@@ -1,206 +1,391 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>Student Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(to bottom right, #dcd6f7, #a6a6f7);
-            font-family: 'Segoe UI', sans-serif;
+        :root {
+            --primary-color: #4a3aff;
+            --secondary-color: #1565c0;
+            --pending-color: #ffc107;
+            --completed-color: #28a745;
+            --rejected-color: #dc3545;
         }
+        
+        body {
+            background: linear-gradient(to bottom right, #f5f7fa, #e4e8f0);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
         .sidebar {
             width: 250px;
-            background: #fff;
-            padding: 20px;
-            border-right: 1px solid #ddd;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
         }
+        
         .sidebar a {
-            display: block;
-            padding: 10px;
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
             color: #333;
             text-decoration: none;
-            margin-bottom: 5px;
+            border-radius: 5px;
+            margin: 5px 10px;
+            transition: all 0.3s ease;
         }
+        
+        .sidebar a:hover {
+            background-color: #e6e6ff;
+            color: var(--primary-color);
+        }
+        
         .sidebar a.active {
             background-color: #e6e6ff;
-            font-weight: bold;
+            color: var(--primary-color);
+            font-weight: 500;
         }
-        .main {
-            flex-grow: 1;
-            padding: 40px;
-        }
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .overview-stat {
-            display: flex;
-            justify-content: space-around;
-            font-size: 16px;
-        }
-        .overview-stat div {
+        
+        .sidebar a i {
+            margin-right: 10px;
+            width: 20px;
             text-align: center;
         }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #e6e6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            color: var(--primary-color);
+            font-size: 30px;
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: none;
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            padding: 15px 20px;
+            font-weight: 500;
+        }
+        
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
         .stat-value {
-            color: #4a3aff;
-            font-weight: bold;
-            font-size: 20px;
+            font-size: 24px;
+            font-weight: 600;
         }
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        .info-item {
-            margin-bottom: 10px;
-        }
-        .info-label {
-            font-weight: bold;
-            color: #555;
-        }
-        .info-value {
-            margin-top: 5px;
-        }
+        
         .status-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
+            padding: 5px 10px;
+            border-radius: 20px;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 500;
         }
-        .status-active {
-            background-color: #e6f7d6;
-            color: #3a7a12;
+        
+        .status-pending { background-color: #fff3cd; color: #856404; }
+        .status-completed { background-color: #d4edda; color: #155724; }
+        .status-rejected { background-color: #f8d7da; color: #721c24; }
+        
+        .room-badge {
+            background-color: #e6e6ff;
+            color: var(--primary-color);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
         }
-        .status-pending {
-            background-color: #fff3cd;
-            color: #856404;
+        
+        .request-item {
+            border-left: 4px solid var(--pending-color);
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .request-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .btn-maintenance {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+        }
+        
+        .btn-maintenance:hover {
+            background-color: var(--secondary-color);
+            color: white;
         }
     </style>
 </head>
 <body>
-
-<div class="sidebar">
-    <img src="${pageContext.request.contextPath}/images/logo.png" alt="UiTM Logo" style="width: 100px;">
-    <a href="studentDashboard.jsp" class="active">Dashboard</a>
-    <a href="studentProfile.jsp">My Profile</a>
-    <a href="studentRoom.jsp">My Room</a>
-    <a href="studentBills.jsp">My Bills</a>
-    <a href="studentMaintenance.jsp">Maintenance Requests</a>
-    <a href="studentVisitors.jsp">Visitor Log</a>
-    <a href="login.jsp">Log Out</a>
-</div>
-
-<div class="main">
-    <h1>Student Dashboard</h1>
-    <p><%= new java.text.SimpleDateFormat("EEEE, MMMM dd, yyyy").format(new java.util.Date()) %></p>
-
-    <div class="card">
-        <h2>Overview</h2>
-        <div class="overview-stat">
-            <div>
-                <div>Semester Period</div>
-                <div class="stat-value">${semesterPeriod}</div>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 sidebar">
+                <div class="text-center py-4">
+                    <img src="${pageContext.request.contextPath}/images/logo-uitm.png" alt="Logo" class="img-fluid" style="max-width: 100px;">
+                </div>
+                <a href="StudentDashboardServlet" class="active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="StudentProfileServlet">
+                    <i class="fas fa-user"></i> My Profile
+                </a>
+                <a href="StudentAllocationServlet">
+                    <i class="fas fa-bed"></i> My Allocation
+                </a>
+                <a href="StudentBillsServlet">
+                    <i class="fas fa-file-invoice-dollar"></i> My Bills
+                </a>
+                <a href="StudentMaintenanceServlet">
+                    <i class="fas fa-tools"></i> Maintenance
+                </a>
+                <a href="StudentVisitorServlet">
+                    <i class="fas fa-address-book"></i> Visitors
+                </a>
+                <a href="logout.jsp" class="text-danger mt-4">
+                    <i class="fas fa-sign-out-alt"></i> Log Out
+                </a>
             </div>
-            <div>
-                <div>Status</div>
-                <div class="stat-value">
-                    <span class="status-badge status-active">${status}</span>
+            
+            <!-- Main Content -->
+            <div class="col-md-10 py-4">
+                <div class="container">
+                    <!-- Student Profile Header -->
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h3>${student.sName}</h3>
+                            <p class="text-muted mb-1">
+                                ${student.program} | Semester ${student.semester}
+                            </p>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-id-card mr-1"></i> ${student.studentID} | 
+                                <i class="fas fa-${student.gender == 'M' ? 'mars' : 'venus'} mr-1"></i> 
+                                ${student.gender == 'M' ? 'Male' : 'Female'}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Dashboard Stats -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-value text-primary">
+                                    <c:choose>
+                                        <c:when test="${not empty allocation}">Allocated</c:when>
+                                        <c:otherwise>Not Allocated</c:otherwise>
+                                    </c:choose>
+                                </div>
+                                <div class="text-muted">Room Status</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-value text-danger">${pendingBillsCount}</div>
+                                <div class="text-muted">Pending Bills</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-value">
+                                    <fmt:formatNumber value="${student.merit}" maxFractionDigits="2"/>
+                                </div>
+                                <div class="text-muted">Merit Score</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card">
+                                <div class="stat-value">${maintenanceRequests.size()}</div>
+                                <div class="text-muted">Maintenance Requests</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Current Allocation -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-bed mr-2"></i> Current Allocation
+                                </div>
+                                <div class="card-body">
+                                    <c:choose>
+                                        <c:when test="${not empty allocation}">
+                                            <p>
+                                                <span class="room-badge">${allocation.blockID}-${allocation.roomID}</span>
+                                            </p>
+                                            <p>
+                                                <strong>From:</strong> 
+                                                <fmt:formatDate value="${allocation.date_from}" pattern="dd MMM yyyy"/>
+                                            </p>
+                                            <c:if test="${not empty allocation.date_to}">
+                                                <p>
+                                                    <strong>To:</strong> 
+                                                    <fmt:formatDate value="${allocation.date_to}" pattern="dd MMM yyyy"/>
+                                                </p>
+                                            </c:if>
+                                            <p class="mb-0">
+                                                <strong>Status:</strong> ${allocation.status}
+                                            </p>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div class="text-center py-3">
+                                                <i class="fas fa-bed fa-2x text-muted mb-3"></i>
+                                                <h5 class="text-muted">No current allocation</h5>
+                                                <p class="text-muted">You haven't been allocated to any room yet</p>
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>
+                            
+                            <!-- Recent Bills -->
+                            <div class="card">
+                                <div class="card-header">
+                                    <i class="fas fa-file-invoice-dollar mr-2"></i> Recent Bills
+                                </div>
+                                <div class="card-body">
+                                    <c:choose>
+                                        <c:when test="${not empty bills}">
+                                            <div class="list-group">
+                                                <c:forEach var="bill" items="${bills}" begin="0" end="2">
+                                                    <div class="list-group-item mb-2">
+                                                        <div class="d-flex justify-content-between">
+                                                            <div>
+                                                                <strong>${bill.billType}</strong><br>
+                                                                <small class="text-muted">
+                                                                    <fmt:formatDate value="${bill.dueDate}" pattern="dd MMM yyyy"/>
+                                                                </small>
+                                                            </div>
+                                                            <div class="text-right">
+                                                                <fmt:formatNumber value="${bill.amount}" type="currency" currencySymbol="RM"/><br>
+                                                                <span class="badge ${bill.status eq 'Paid' ? 'badge-success' : 'badge-danger'}">
+                                                                    ${bill.status}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </c:forEach>
+                                            </div>
+                                            <a href="StudentBillsServlet" class="btn btn-sm btn-outline-primary mt-2">
+                                                View All Bills <i class="fas fa-arrow-right ml-1"></i>
+                                            </a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div class="text-center py-3">
+                                                <i class="fas fa-file-invoice-dollar fa-2x text-muted mb-3"></i>
+                                                <h5 class="text-muted">No bills found</h5>
+                                                <p class="text-muted">You don't have any bills yet</p>
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Maintenance Requests -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-tools mr-2"></i> Recent Maintenance Requests</span>
+                                    <a href="StudentMaintenanceServlet" class="btn btn-maintenance btn-sm">
+                                        <i class="fas fa-plus mr-1"></i> New Request
+                                    </a>
+                                </div>
+                                <div class="card-body">
+                                    <c:choose>
+                                        <c:when test="${not empty maintenanceRequests}">
+                                            <div class="list-group">
+                                                <c:forEach var="request" items="${maintenanceRequests}">
+                                                    <div class="list-group-item request-item mb-2">
+                                                        <div class="d-flex justify-content-between">
+                                                            <div>
+                                                                <strong>${request.issue_type}</strong><br>
+                                                                <small class="text-muted">
+                                                                    <fmt:formatDate value="${request.request_date}" pattern="dd MMM yyyy"/>
+                                                                </small>
+                                                            </div>
+                                                            <div>
+                                                                <span class="status-badge 
+                                                                    <c:choose>
+                                                                        <c:when test="${request.status eq 'Pending'}">status-pending</c:when>
+                                                                        <c:when test="${request.status eq 'Completed'}">status-completed</c:when>
+                                                                        <c:otherwise>status-rejected</c:otherwise>
+                                                                    </c:choose>">
+                                                                    ${request.status}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <p class="mb-0 mt-2">${request.description}</p>
+                                                        <small class="text-muted">
+                                                            Room: ${request.blockID}-${request.roomID}
+                                                        </small>
+                                                    </div>
+                                                </c:forEach>
+                                            </div>
+                                            <a href="StudentMaintenanceServlet" class="btn btn-sm btn-outline-primary mt-2">
+                                                View All Requests <i class="fas fa-arrow-right ml-1"></i>
+                                            </a>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <div class="text-center py-3">
+                                                <i class="fas fa-tools fa-2x text-muted mb-3"></i>
+                                                <h5 class="text-muted">No maintenance requests</h5>
+                                                <p class="text-muted">You haven't submitted any maintenance requests yet</p>
+                                                <a href="StudentMaintenanceServlet" class="btn btn-maintenance">
+                                                    <i class="fas fa-plus mr-1"></i> Create Request
+                                                </a>
+                                            </div>
+                                        </c:otherwise>
+                                    </c:choose>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div>
-                <div>Allocation</div>
-                <div class="stat-value">${allocation}</div>
-            </div>
         </div>
     </div>
 
-    <div class="card">
-        <h2>Room Details</h2>
-        <div class="info-grid">
-            <div class="info-item">
-                <div class="info-label">Room Number</div>
-                <div class="info-value">${roomNumber}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Room Type</div>
-                <div class="info-value">${roomType}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Roommates</div>
-                <div class="info-value">${roommateCount} (${currentRoommates}/${roomCapacity})</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Block</div>
-                <div class="info-value">${blockName}</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>Student Status</h2>
-        <div class="info-grid">
-            <div class="info-item">
-                <div class="info-label">Student Status</div>
-                <div class="info-value">${studentStatus}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Resident</div>
-                <div class="info-value">${residentStatus}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Pending Requests</div>
-                <div class="info-value">${pendingRequests}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Visitor Visits</div>
-                <div class="info-value">${visitorVisits}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Paid Bills</div>
-                <div class="info-value">${paidBills}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Unpaid Bills</div>
-                <div class="info-value">${unpaidBills}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Maintenance Requests</div>
-                <div class="info-value">${maintenanceRequests}</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="card">
-        <h2>Block Information</h2>
-        <div class="info-grid">
-            <div class="info-item">
-                <div class="info-label">Block Name</div>
-                <div class="info-value">${blockName}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Rooms Allocated</div>
-                <div class="info-value">${roomsAllocated}/${totalRooms}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Rooms Available</div>
-                <div class="info-value">${roomsAvailable}/${totalRooms}</div>
-            </div>
-            <div class="info-item">
-                <div class="info-label">Warden</div>
-                <div class="info-value">${wardenName}</div>
-            </div>
-        </div>
-    </div>
-</div>
-
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

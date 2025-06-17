@@ -5,7 +5,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Bill Management</title>
+    <title>Student Bills</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
@@ -87,6 +87,37 @@
             padding: 15px 25px;
             font-weight: 500;
             border: none;
+        }
+        
+        .student-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .student-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #e6e6ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            color: var(--primary-color);
+            font-size: 30px;
+        }
+        
+        .student-info h4 {
+            margin-bottom: 5px;
+            color: var(--dark-bg);
+        }
+        
+        .student-meta {
+            font-size: 14px;
+            color: #6c757d;
         }
         
         .stat-card {
@@ -176,34 +207,6 @@
             font-weight: 500;
         }
         
-        .student-name {
-            font-weight: 500;
-            color: var(--dark-bg);
-        }
-        
-        .student-id {
-            font-size: 12px;
-            color: #6c757d;
-        }
-        
-        .search-box {
-            position: relative;
-            margin-bottom: 20px;
-        }
-        
-        .search-box input {
-            padding-left: 35px;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-        }
-        
-        .search-box i {
-            position: absolute;
-            left: 12px;
-            top: 10px;
-            color: #6c757d;
-        }
-        
         .due-date {
             font-weight: 500;
         }
@@ -221,6 +224,22 @@
             font-weight: 500;
         }
         
+        .back-btn {
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            background-color: #5a6268;
+            color: white;
+            text-decoration: none;
+        }
+        
         @media (max-width: 768px) {
             body {
                 flex-direction: column;
@@ -234,6 +253,16 @@
             .main {
                 padding: 20px;
             }
+            
+            .student-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .student-avatar {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
         }
     </style>
 </head>
@@ -245,7 +274,7 @@
         <a href="studentManagement.jsp"><i class="fas fa-users"></i> Student</a>
         <a href="wardenManagement.jsp"><i class="fas fa-user-shield"></i> Warden</a>
         <a href="allocationView.jsp"><i class="fas fa-bed"></i> Allocation</a>
-        <a href="billManagement.jsp" class="active"><i class="fas fa-file-invoice-dollar"></i> Manage Bills</a>
+        <a href="billManagement.jsp"><i class="fas fa-file-invoice-dollar"></i> Manage Bills</a>
         <a href="maintenanceManagement.jsp"><i class="fas fa-tools"></i> Maintenance</a>
         <a href="visitorManagement.jsp"><i class="fas fa-address-book"></i> Visitor</a>
         <a href="login.jsp"><i class="fas fa-sign-out-alt"></i> Log Out</a>
@@ -254,10 +283,31 @@
     <div class="main">
         <div class="card">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h4 class="mb-0"><i class="fas fa-file-invoice-dollar mr-2"></i> Bill Management</h4>
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" class="form-control" placeholder="Search bills..." id="searchInput">
+                <h4 class="mb-0"><i class="fas fa-file-invoice-dollar mr-2"></i> Student Bills</h4>
+                <a href="billManagement.jsp" class="back-btn">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to All Bills
+                </a>
+            </div>
+            
+            <div class="student-header">
+                <div class="student-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="student-info">
+                    <h4>${student.sName}</h4>
+                    <div class="student-meta">
+                        <span>ID: ${student.studentID}</span> | 
+                        <span>${student.program}</span> | 
+                        <span>Semester ${student.semester}</span>
+                    </div>
+                    <div class="student-meta mt-1">
+                        <i class="fas fa-${student.gender == 'M' ? 'mars' : 'venus'} mr-1"></i>
+                        <span>${student.gender == 'M' ? 'Male' : 'Female'}</span> | 
+                        <i class="fas fa-phone mr-1"></i>
+                        <span>${student.sPho}</span> | 
+                        <i class="fas fa-envelope mr-1"></i>
+                        <span>${student.sEmail}</span>
+                    </div>
                 </div>
             </div>
             
@@ -295,7 +345,6 @@
                     <thead>
                         <tr>
                             <th>Bill</th>
-                            <th>Student</th>
                             <th>Amount</th>
                             <th>Due Date</th>
                             <th>Status</th>
@@ -303,30 +352,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <c:forEach var="view" items="${bills}">
+                        <c:forEach var="bill" items="${bills}">
                             <tr>
                                 <td>
-                                    <span class="bill-type">${view.bill.billType}</span><br>
-                                    <small class="text-muted">ID: ${view.bill.billID}</small>
+                                    <span class="bill-type">${bill.billType}</span><br>
+                                    <small class="text-muted">ID: ${bill.billID}</small>
+                                </td>
+                                <td class="${bill.status eq 'Paid' ? 'amount-paid' : 'amount-unpaid'}">
+                                    <fmt:formatNumber value="${bill.amount}" type="currency" currencySymbol="RM"/>
                                 </td>
                                 <td>
-                                    <div class="student-name">${view.student.sName}</div>
-                                    <div class="student-id">ID: ${view.student.studentID}</div>
-                                </td>
-                                <td class="${view.bill.status eq 'Paid' ? 'amount-paid' : 'amount-unpaid'}">
-                                    <fmt:formatNumber value="${view.bill.amount}" type="currency" currencySymbol="RM"/>
-                                </td>
-                                <td>
-                                    <span class="due-date ${view.bill.status eq 'Unpaid' && view.bill.dueDate.time lt today.time ? 'overdue' : ''}">
-                                        <fmt:formatDate value="${view.bill.dueDate}" pattern="dd MMM yyyy"/>
+                                    <span class="due-date ${bill.status eq 'Unpaid' && bill.dueDate.time lt today.time ? 'overdue' : ''}">
+                                        <fmt:formatDate value="${bill.dueDate}" pattern="dd MMM yyyy"/>
                                     </span>
-                                    <c:if test="${view.bill.status eq 'Unpaid' && view.bill.dueDate.time lt today.time}">
+                                    <c:if test="${bill.status eq 'Unpaid' && bill.dueDate.time lt today.time}">
                                         <br><small class="text-danger">Overdue</small>
                                     </c:if>
                                 </td>
                                 <td>
                                     <c:choose>
-                                        <c:when test="${view.bill.status eq 'Paid'}">
+                                        <c:when test="${bill.status eq 'Paid'}">
                                             <span class="status-badge status-paid">
                                                 <i class="fas fa-check-circle mr-1"></i> Paid
                                             </span>
@@ -355,8 +400,8 @@
             <c:if test="${empty bills}">
                 <div class="text-center py-4">
                     <i class="fas fa-file-invoice-dollar fa-3x text-muted mb-3"></i>
-                    <h5 class="text-muted">No bill records found</h5>
-                    <p class="text-muted">There are currently no bills in the system</p>
+                    <h5 class="text-muted">No bills found for this student</h5>
+                    <p class="text-muted">This student currently has no bills in the system</p>
                 </div>
             </c:if>
         </div>
@@ -369,14 +414,6 @@
         today.setHours(0, 0, 0, 0);
         
         $(document).ready(function() {
-            // Search functionality
-            $("#searchInput").on("keyup", function() {
-                const value = $(this).val().toLowerCase();
-                $("table tbody tr").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-                });
-            });
-            
             // Highlight row on hover
             $("table tbody tr").hover(
                 function() {
