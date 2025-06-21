@@ -1,157 +1,202 @@
-<%@page import="hms_controller.AdminDashboardServlet"%>
+<%-- src/main/webapp/adminDashboard.jsp --%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Hostel Management</title>
     <style>
         body {
-            display: flex;
-            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light grey background */
             margin: 0;
-            background: linear-gradient(to bottom right, #dcd6f7, #a6a6f7);
-            font-family: 'Segoe UI', sans-serif;
+            padding: 0;
+            color: #333;
+            display: flex;
         }
         .sidebar {
             width: 250px;
-            background: #fff;
+            background-color: #2c3e50; /* Dark blue-grey */
+            color: white;
             padding: 20px;
-            border-right: 1px solid #ddd;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
         }
-        .sidebar a {
-            display: block;
-            padding: 10px;
-            color: #333;
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ecf0f1; /* Lighter grey */
+            font-size: 1.5em;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin-bottom: 15px;
+        }
+        .sidebar ul li a {
+            color: white;
             text-decoration: none;
-            margin-bottom: 5px;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 8px; /* Rounded corners */
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
-        .sidebar a.active {
-            background-color: #e6e6ff;
+        .sidebar ul li a:hover {
+            background-color: #34495e; /* Slightly lighter dark blue-grey */
+            transform: translateX(5px);
+        }
+        .sidebar ul li a.active {
+            background-color: #007bff;
             font-weight: bold;
         }
-        .main {
+        .main-content {
+            margin-left: 270px; /* Space for sidebar */
+            padding: 30px;
             flex-grow: 1;
-            padding: 40px;
+            width: calc(100% - 270px);
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: #ffffff;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        .header h1 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 2em;
+        }
+        .user-info {
+            font-weight: bold;
+            color: #555;
+        }
+        .user-info span {
+            color: #007bff;
+        }
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
         }
         .card {
-            background: white;
+            background-color: #ffffff;
+            padding: 25px;
             border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .overview-stat {
-            display: flex;
-            justify-content: space-around;
-            font-size: 16px;
-        }
-        .overview-stat div {
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid #e0e0e0;
         }
-        .stat-value {
-            color: #4a3aff;
-            font-weight: bold;
-            font-size: 20px;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
-        .feedback-item {
-            border-top: 1px solid #eee;
-            padding: 10px 0;
+        .card h3 {
+            color: #34495e;
+            margin-top: 0;
+            font-size: 1.4em;
         }
-        .feedback-item:first-child {
-            border-top: none;
+        .card p {
+            color: #666;
+            line-height: 1.6;
         }
-        .feedback-name {
-            font-weight: bold;
+        .card .btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 15px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
         }
-        .feedback-room {
-            float: right;
-            font-size: 14px;
-            color: #999;
+        .card .btn:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .logout-btn {
+            display: block;
+            width: calc(100% - 30px); /* Adjust for padding */
+            background-color: #e74c3c; /* Red for logout */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            text-align: center;
+            text-decoration: none;
+            margin: 30px 15px 0;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .logout-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
     <div class="sidebar">
-        <img src="${pageContext.request.contextPath}/images/logo-uitm.png" alt="UiTM Logo" style="width: 100px;">
-        <a href="adminDashboard.jsp" class="active">Dashboard</a>
-        <a href="adminProfile.jsp">My Profile</a>
-        <a href="studentManagement.jsp">Student</a>
-        <a href="wardenManagement.jsp">Warden</a>
-        <a href="allocationView.jsp">Allocation</a>
-        <a href="billManagement.jsp">Manage Bills</a>
-        <a href="maintenanceManagement.jsp">Manage Maintenance</a>
-        <a href="visitorManagement.jsp">Visitor Details</a>
-        <a href="login.jsp">Log Out</a>
+        <h2>Admin Panel</h2>
+        <nav>
+            <ul>
+                <li><a href="adminDashboard" class="active">Dashboard</a></li>
+                <li><a href="adminProfile" class="">Profile</a></li> <%-- Link to the view profile page --%>
+                <li><a href="adminStudentManagement">Manage Students</a></li>
+                <li><a href="adminWardenManagement">Manage Wardens</a></li>
+                <li><a href="adminBillManagement">Manage Bills</a></li>
+                <li><a href="adminMaintenanceManagement">Manage Maintenance</a></li>
+                <li><a href="adminAllocationManagement" >Manage Allocations</a></li>
+            </ul>
+        </nav>
+        <a href="adminLogout" class="logout-btn">Logout</a>
     </div>
 
-    <div class="main">
-        <div class="card">   
-            <h5>Overview</h5>
-            <div class="overview-stat mt-3">
-                <div>
-                    <div class="stat-value"><%= AdminDashboardServlet.getTotalStudents() %></div>
-                    <div>student in college</div>
-                </div>
-                <div>
-                    <div class="stat-value"><%= AdminDashboardServlet.getTotalWardens() %></div>
-                    <div>Wardens</div>
-                </div>
-                <div>
-                    <div class="stat-value"><%= AdminDashboardServlet.getTotalMaintenanceRequests() %></div>
-                    <div>Maintenance request</div>
-                </div>
-                <div>
-                    <div class="stat-value"><%= AdminDashboardServlet.getTotalRooms() %></div>
-                    <div>Total rooms</div>
-                </div>
-                <div>
-                    <div class="stat-value"><%= AdminDashboardServlet.getTotalAllocatedRooms() %></div>
-                    <div>Occupied room</div>
-                </div>
+    <div class="main-content">
+        <div class="header">
+            <h1>Dashboard</h1>
+            <div class="user-info">
+                Welcome, <span>${sessionScope.currentAdmin.adminName}</span>!
             </div>
         </div>
 
-        <div class="card">
-            <h5>Room status</h5>
-            <div class="row mt-3">
-                <div class="col-md-6">
-                    <p><strong>Occupied rooms:</strong> <%= AdminDashboardServlet.getTotalAllocatedRooms() %></p>
-                    <!-- These would need additional methods in the servlet -->
-                    <p>Clean: 90</p>
-                    <p>Dirty: 4</p>
-                    <p>Inspected: 60</p>
-                </div>
-                <div class="col-md-6">
-                    <%
-                        int totalRooms = AdminDashboardServlet.getTotalRooms();
-                        int allocatedRooms = AdminDashboardServlet.getTotalAllocatedRooms();
-                        int availableRooms = totalRooms - allocatedRooms;
-                    %>
-                    <p><strong>Available rooms:</strong> <%= availableRooms %></p>
-                    <!-- These would need additional methods in the servlet -->
-                    <p>Clean: 17</p>
-                    <p>Dirty: 2</p>
-                    <p>Inspected: 3</p>
-                </div>
+        <div class="card-container">
+            <div class="card">
+                <h3>Student Management</h3>
+                <p>Add, view, edit, and delete student records.</p>
+                <a href="adminStudentManagement" class="btn">Go to Students</a>
             </div>
-        </div>
-        <div class="card">
-            <h5>Student feedback</h5>
-            <div class="feedback-item">
-                <div>
-                    <span class="feedback-name">Christian</span>
-                    <span class="feedback-room">A101</span>
-                </div>
-                <div>Facilities are not enough for amount paid.</div>
+            <div class="card">
+                <h3>Warden Management</h3>
+                <p>Handle warden accounts and their block assignments.</p>
+                <a href="adminWardenManagement" class="btn">Go to Wardens</a>
             </div>
-            <div class="feedback-item">
-                <div>
-                    <span class="feedback-name">Alexander</span>
-                    <span class="feedback-room">A301</span>
-                </div>
-                <div>Room cleaning could be better.</div>
+            <div class="card">
+                <h3>Bill Management</h3>
+                <p>Oversee student bills, payments, and dues.</p>
+                <a href="adminBillManagement" class="btn">Go to Bills</a>
+            </div>
+            <div class="card">
+                <h3>Maintenance Requests</h3>
+                <p>Track and manage maintenance requests from students.</p>
+                <a href="adminMaintenanceManagement" class="btn">Go to Maintenance</a>
+            </div>
+            <div class="card">
+                <h3>Your Profile</h3>
+                <p>View and update your administrator profile.</p>
+                <a href="adminProfile" class="btn">Go to Profile</a>
             </div>
         </div>
     </div>
